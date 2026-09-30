@@ -1,0 +1,28 @@
+version: 0.1
+
+workflows:
+  main:
+    jobs:
+    - build
+
+jobs:
+  build:
+    steps:
+    - clone
+
+    - cache_restore:
+        path: ~/.composer
+        key: 'composer-{{ hash "composer.lock" }}-v1'
+
+    - run: wodby ci init $WODBY_BUILD_ID
+
+    # use wodby ci run instead of wodby ci build with buildx cache because we need to scaffold web/ for nginx image.
+    - run: wodby ci run -- composer install -n --no-ansi
+    - run: wodby ci build
+
+    - cache_save:
+        key: 'composer-{{ hash "composer.lock" }}-v1'
+        path: ~/.composer
+
+    - run: wodby ci push
+    - run: wodby ci deploy

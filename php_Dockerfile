@@ -1,0 +1,10 @@
+# The Drupal PHP service's own build Dockerfile, plus one build argument for the dashboard E2E tests.
+ARG WODBY_BASE_IMAGE
+FROM ${WODBY_BASE_IMAGE}
+
+ARG COPY_FROM
+COPY --chown=wodby:wodby ${COPY_FROM} /var/www/html
+
+# Wodby CI passes an app service build variable to the build only through an ARG that the Dockerfile declares.
+ARG E2E_BUILD_VALUE=unset
+RUN printf '%s\n' "${E2E_BUILD_VALUE}" > /var/www/html/e2e-build-value.txt
