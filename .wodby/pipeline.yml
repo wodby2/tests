@@ -10,6 +10,9 @@ jobs:
     steps:
     - clone
 
+    # E2E: this branch must fail its build, so a test can check that the running deployment keeps serving.
+    - run: echo 'This E2E fixture branch fails its build on purpose.' && exit 1
+
     - cache_restore:
         path: ~/.composer
         key: 'composer-{{ hash "composer.lock" }}-v1'
